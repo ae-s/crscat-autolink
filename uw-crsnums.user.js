@@ -18,7 +18,7 @@
 	    return "http://www.washington.edu/students/timeschd/AUT2006/" + urls[sec] + ".html#" + sec.toLowerCase().replace(/\W/, '') + nr;
     }
 
-    // tags we will scan looking for un-hyperlinked urls
+    // tags we will scan looking for un-hyperlinked text
     var allowedParents = [
         "abbr", "acronym", "address", "applet", "b", "bdo", "big", "blockquote", "body", 
         "caption", "center", "cite", "code", "dd", "del", "div", "dfn", "dt", "em", 
@@ -26,17 +26,16 @@
         "ins", "kdb", "li", "object", "pre", "p", "q", "samp", "small", "span", "strike", 
         "s", "strong", "sub", "sup", "td", "th", "tt", "u", "var"
         ];
-    
+
     var xpath = "//text()[(parent::" + allowedParents.join(" or parent::") + ")]";
 
     var candidates = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
-    var t0 = new Date().getTime();
     for (var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++) {
         if (urlRegex.test(cand.nodeValue)) {
             var span = document.createElement("span");
             var source = cand.nodeValue;
-            
+
             cand.parentNode.replaceChild(span, cand);
 
             urlRegex.lastIndex = 0;
@@ -46,7 +45,7 @@
 		if (url == "undefined")
 			continue;
                 span.appendChild(document.createTextNode(source.substring(lastLastIndex, match.index)));
-                
+
                 var a = document.createElement("a");
                 a.setAttribute("href", url);
                 a.appendChild(document.createTextNode(match[0]));
@@ -59,8 +58,6 @@
             span.normalize();
         }
     }
-    var t1 = new Date().getTime();
-    //alert((t1 - t0) / 1000);
 
 })();
 
